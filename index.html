@@ -468,14 +468,29 @@ select.a-form-input option{background:#1A1A1E}
   .a-barber-grid{grid-template-columns:1fr 1fr}
   .a-grid-2,.a-grid-3{grid-template-columns:1fr}
   .a-form-grid{grid-template-columns:1fr}
-  .a-content{padding:12px;padding-bottom:80px;overflow-x:auto}
+  .a-content{padding:12px;padding-bottom:80px}
   .a-topbar{padding:10px 14px}
   .a-page-title{font-size:16px}
-  table{font-size:11px}
-  thead th{padding:8px 10px;font-size:8px}
-  td{padding:8px 10px}
   .a-modal{margin:12px;max-width:calc(100vw - 24px)}
   .a-stats-grid .a-sc-val{font-size:24px}
+
+  /* Services - Show as cards on mobile instead of table */
+  .a-table-card#av-services .a-table-head{display:none}
+  #av-services table,#av-services thead,#av-services tbody,#av-services tr,#av-services th{display:block;width:100%}
+  #av-services table{background:transparent;border:none}
+  #av-services tr{display:flex;flex-direction:column;background:#141416;border:1px solid #2A2A32;border-radius:10px;padding:12px;margin-bottom:10px;gap:8px}
+  #av-services td{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border:none}
+  #av-services td:before{content:attr(data-label) ":";font-weight:600;color:#606078;margin-right:8px}
+  #av-services td:first-child{font-size:20px;justify-content:center;width:100%}
+  #av-services .a-td-actions{justify-content:center;width:100%;margin-top:8px}
+
+  /* Barbers - 1 column */
+  .a-barber-grid{grid-template-columns:1fr}
+
+  /* Table responsive */
+  table{font-size:11px;min-width:auto;width:100%;display:block;overflow-x:auto}
+  thead th{padding:8px 10px;font-size:8px}
+  td{padding:8px 10px;min-width:80px}
 }
 </style>
 </head>
@@ -1766,6 +1781,12 @@ function aCheckMobile() {
 document.addEventListener('click', function(e) {
   // Find the clicked button element
   let btn = e.target.closest('.a-toggle') || e.target.closest('.a-act-btn.edit') || e.target.closest('.a-act-btn.del');
+
+  // Also check for modal buttons (save, cancel)
+  if (!btn && e.target.closest('.a-modal-btns')) {
+    btn = e.target.closest('.a-btn') || e.target.closest('button');
+  }
+
   if (!btn) return;
 
   // Get onclick attribute and extract function call
