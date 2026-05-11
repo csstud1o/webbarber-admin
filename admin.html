@@ -751,11 +751,14 @@ async function saveEditedBarber(id) {
       rating: parseFloat(document.getElementById('barber-rating').value) || 4.5
     };
 
-    await sb.from('barbers').update(barber).eq('id', id);
+    console.log('Updating barber:', id, barber);
+    var result = await sb.from('barbers').update(barber).eq('id', id);
+    console.log('Update result:', result);
     closeModal();
     loadBarbers();
     showToast('Master yangilandi ✅', 'success');
   } catch(e) {
+    console.error('Update error:', e);
     showToast('Xatolik: ' + e.message, 'error');
   }
 }
@@ -763,10 +766,13 @@ async function saveEditedBarber(id) {
 async function deleteBarber(id) {
   if (confirm('Masterni o\'chirish?')) {
     try {
-      await sb.from('barbers').delete().eq('id', id);
+      console.log('Deleting barber:', id);
+      var result = await sb.from('barbers').delete().eq('id', id);
+      console.log('Delete result:', result);
       loadBarbers();
       showToast('Master o\'chirildi', 'success');
     } catch(e) {
+      console.error('Delete error:', e);
       showToast('Xatolik: ' + e.message, 'error');
     }
   }
