@@ -653,8 +653,8 @@ async function loadBarbers() {
         '<div class="list-item-right">' +
         '<div class="switch ' + (b.active ? 'active' : '') + '" data-id="' + b.id + '" data-active="' + b.active + '" onclick="toggleBarber(this)"></div>' +
         '<div class="action-btns">' +
-        '<button class="btn btn-sm btn-secondary edit-btn" data-id="' + b.id + '">✏️</button>' +
-        '<button class="btn btn-sm btn-danger delete-btn" data-id="' + b.id + '">🗑️</button>' +
+        '<button class="btn btn-sm btn-secondary edit-btn" data-id="' + b.id + '" onclick="editBarber(\'' + b.id + '\')">✏️</button>' +
+        '<button class="btn btn-sm btn-danger delete-btn" data-id="' + b.id + '" onclick="deleteBarber(\'' + b.id + '\')">🗑️</button>' +
         '</div>' +
         '</div>' +
         '</div>';
@@ -796,8 +796,8 @@ async function loadServices() {
         '</div>' +
         '</div>' +
         '<div class="service-actions">' +
-        '<button class="btn btn-sm btn-secondary edit-btn" data-id="' + s.id + '">✏️ Tahrirlash</button>' +
-        '<button class="btn btn-sm btn-danger delete-btn" data-id="' + s.id + '">🗑️ O\'chirish</button>' +
+        '<button class="btn btn-sm btn-secondary edit-btn" data-id="' + s.id + '" onclick="editService(\'' + s.id + '\')">✏️ Tahrirlash</button>' +
+        '<button class="btn btn-sm btn-danger delete-btn" data-id="' + s.id + '" onclick="deleteService(\'' + s.id + '\')">🗑️ O\'chirish</button>' +
         '</div>' +
         '</div>';
     });

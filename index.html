@@ -470,9 +470,10 @@ select.a-form-input option{background:#1A1A1E}
   .a-content{padding:12px;padding-bottom:80px;overflow-x:hidden}
   .a-topbar{padding:10px 14px}
   .a-page-title{font-size:16px}
-  table{font-size:11px}
+  table{font-size:11px;overflow-x:auto;display:block}
   thead th{padding:8px 10px;font-size:8px}
   td{padding:8px 10px}
+  .a-td-actions{min-width:60px}
   .a-modal{margin:12px;max-width:calc(100vw - 24px)}
   .a-stats-grid .a-sc-val{font-size:24px}
   .a-chart-area{overflow-x:auto;padding:14px 10px}
@@ -1721,6 +1722,11 @@ async function aLoadAll() {
 }
 
 function aGoView(id, el) {
+  // Close sidebar on mobile when selecting menu item
+  var sidebar = document.getElementById('a-sidebar');
+  if (sidebar && window.innerWidth <= 768) {
+    sidebar.classList.remove('open');
+  }
   document.querySelectorAll('.a-view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.a-sb-item').forEach(i => i.classList.remove('active'));
   document.getElementById('av-' + id).classList.add('active');
