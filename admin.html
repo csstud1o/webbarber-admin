@@ -751,10 +751,16 @@ async function saveEditedBarber(id) {
       rating: parseFloat(document.getElementById('barber-rating').value) || 4.5
     };
 
-    console.log('Updating barber:', id, barber);
     var result = await sb.from('barbers').update(barber).eq('id', id);
     console.log('Update result:', result);
-    // Force reload after update
+
+    // Verify update worked
+    var check = await sb.from('barbers').select('*').eq('id', id).single();
+    if (!check.data || check.data.name !== name) {
+      showToast('Xatolik: Yangilanmadi', 'error');
+      return;
+    }
+
     setTimeout(function() { loadBarbers(); }, 100);
     closeModal();
     showToast('Master yangilandi ✅', 'success');
@@ -767,12 +773,16 @@ async function saveEditedBarber(id) {
 async function deleteBarber(id) {
   if (confirm('Masterni o\'chirish?')) {
     try {
-      console.log('Deleting barber:', id);
       var result = await sb.from('barbers').delete().eq('id', id);
       console.log('Delete result:', result);
-      // Force reload after delete
+      // Verify delete worked by checking if record still exists
+      var check = await sb.from('barbers').select('id').eq('id', id).single();
+      if (check.data) {
+        showToast('Xatolik: O\'chirilmadi', 'error');
+        return;
+      }
       setTimeout(function() { loadBarbers(); }, 100);
-      showToast('Master o\'chirildi', 'success');
+      showToast('Master o\'chirildi ✅', 'success');
     } catch(e) {
       console.error('Delete error:', e);
       showToast('Xatolik: ' + e.message, 'error');
