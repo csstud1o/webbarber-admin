@@ -464,33 +464,33 @@ select.a-form-input option{background:#1A1A1E}
   .a-sidebar{width:220px;background:#141416;transform:translateX(-100%);transition:transform 0.3s;left:0}
   .a-sidebar.open{transform:translateX(0)}
   .a-main{margin-left:0}
-  .a-stats-grid{grid-template-columns:1fr}
-  .a-barber-grid{grid-template-columns:1fr 1fr}
-  .a-grid-2,.a-grid-3{grid-template-columns:1fr}
-  .a-form-grid{grid-template-columns:1fr}
-  .a-content{padding:12px;padding-bottom:80px}
-  .a-topbar{padding:10px 14px}
-  .a-page-title{font-size:16px}
-  .a-modal{margin:12px;max-width:calc(100vw - 24px)}
-  .a-stats-grid .a-sc-val{font-size:24px}
+  .a-content{padding:12px;padding-bottom:70px}
+  .a-topbar{padding:8px 10px}
+  .a-page-title{font-size:14px}
+  .a-page-sub{font-size:10px}
+  .a-modal{margin:10px;padding:16px;max-width:calc(100vw - 20px)}
 
-  /* Services - Show as cards on mobile instead of table */
-  .a-table-card#av-services .a-table-head{display:none}
-  #av-services table,#av-services thead,#av-services tbody,#av-services tr,#av-services th{display:block;width:100%}
-  #av-services table{background:transparent;border:none}
-  #av-services tr{display:flex;flex-direction:column;background:#141416;border:1px solid #2A2A32;border-radius:10px;padding:12px;margin-bottom:10px;gap:8px}
-  #av-services td{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border:none}
-  #av-services td:before{content:attr(data-label) ":";font-weight:600;color:#606078;margin-right:8px}
-  #av-services td:first-child{font-size:20px;justify-content:center;width:100%}
-  #av-services .a-td-actions{justify-content:center;width:100%;margin-top:8px}
+  /* Dashboard - smaller stats */
+  .a-stats-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .a-stat{padding:10px}
+  .a-sc-label{font-size:8px;margin-bottom:4px}
+  .a-sc-val{font-size:18px}
+  .a-sc-sub{font-size:9px}
+  .a-grid-2,.a-grid-3{grid-template-columns:1fr;gap:10px}
 
-  /* Barbers - 1 column */
-  .a-barber-grid{grid-template-columns:1fr}
+  /* Barbers - smaller grid */
+  .a-barber-grid{grid-template-columns:1fr;gap:8px}
+  .a-bmc{padding:12px}
+  .a-bmc-ava{width:45px;height:45px;font-size:18px}
+  .a-bmc-name{font-size:12px}
+  .a-bmc-role{font-size:9px}
 
-  /* Table responsive */
-  table{font-size:11px;min-width:auto;width:100%;display:block;overflow-x:auto}
-  thead th{padding:8px 10px;font-size:8px}
-  td{padding:8px 10px;min-width:80px}
+  /* Services table - scrollable */
+  .a-table-card{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .a-table-card table{min-width:400px}
+
+  /* Buttons smaller */
+  .a-btn{padding:8px 12px;font-size:12px}
 }
 </style>
 </head>
@@ -1777,58 +1777,28 @@ function aCheckMobile() {
   document.getElementById('a-menu-btn').style.display = window.innerWidth <= 768 ? 'flex' : 'none';
 }
 
-// GLOBAL EVENT DELEGATION - handles all dynamically created button clicks
+// GLOBAL EVENT DELEGATION - handles dynamically created button clicks
 document.addEventListener('click', function(e) {
-  // Find the clicked button element
-  let btn = e.target.closest('.a-toggle') || e.target.closest('.a-act-btn.edit') || e.target.closest('.a-act-btn.del');
-
-  // Also check for modal buttons (save, cancel)
-  if (!btn && e.target.closest('.a-modal-btns')) {
-    btn = e.target.closest('.a-btn') || e.target.closest('button');
-  }
+  let btn = e.target.closest('.a-toggle');
+  if (!btn) btn = e.target.closest('.a-act-btn.edit');
+  if (!btn) btn = e.target.closest('.a-act-btn.del');
 
   if (!btn) return;
 
-  // Get onclick attribute and extract function call
   const onclick = btn.getAttribute('onclick');
   if (!onclick) return;
 
-  console.log('Button clicked, onclick:', onclick);
-
-  // Parse function name and arguments from onclick
   const match = onclick.match(/^(\w+)\((.*)\)$/);
-  if (!match) {
-    console.log('Could not parse onclick:', onclick);
-    return;
-  }
+  if (!match) return;
 
   const funcName = match[1];
-  let args = match[2];
+  const args = match[2];
 
-  // Handle different argument types
-  let parsedArgs = [];
   if (args) {
-    // Check if it's a number or string
-    if (args.startsWith("'") || args.startsWith('"')) {
-      parsedArgs = [args.slice(1, -1)];
-    } else if (!isNaN(args)) {
-      parsedArgs = [parseInt(args)];
-    } else {
-      // Try to evaluate arrays like "1,2,3"
-      try {
-        parsedArgs = JSON.parse('[' + args + ']');
-      } catch(err) {
-        parsedArgs = [args];
-      }
-    }
-  }
-
-  // Try to call the function
-  if (typeof window[funcName] === 'function') {
-    console.log('Calling:', funcName, 'with args:', parsedArgs);
-    window[funcName].apply(null, parsedArgs);
+    const arg = args.startsWith("'") ? args.slice(1, -1) : (args.startsWith('"') ? args.slice(1, -1) : parseInt(args));
+    if (typeof window[funcName] === 'function') window[funcName](arg);
   } else {
-    console.log('Function not found:', funcName);
+    if (typeof window[funcName] === 'function') window[funcName]();
   }
 
   e.preventDefault();
@@ -1999,7 +1969,6 @@ function aRenderBarbers() {
     </div>`).join('') || '<div style="padding:30px;text-align:center;color:#606078">Masterlar yo\'q</div>';
 }
 
-console.log('aOpenBarberModal called with id:', id);
 function aOpenBarberModal(id = null) {
   document.getElementById('m-barber-title').textContent = id ? 'MASTERNI TAHRIRLASH' : "MASTER QO'SHISH";
   document.getElementById('m-b-id').value = id || '';
@@ -2122,7 +2091,6 @@ async function aToggleBarber(id) {
 }
 
 async function aDeleteBarber(id) {
-  console.log('aDeleteBarber called with id:', id);
   if (!confirm("Masterni o'chirishni xohlaysizmi?")) return;
   try { await sb.from('barbers').delete().eq('id', id); } catch(e) { console.error(e); }
   SB_DATA.barbers = (SB_DATA.barbers || []).filter(b => b.id !== id);
@@ -2150,7 +2118,6 @@ function aRenderServices() {
     </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:30px;color:#606078">Xizmatlar yo\'q</td></tr>';
 }
 
-console.log('aOpenServiceModal called with id:', id);
 function aOpenServiceModal(id = null) {
   document.getElementById('m-svc-title').textContent = id ? 'XIZMATNI TAHRIRLASH' : "XIZMAT QO'SHISH";
   document.getElementById('m-s-id').value = id || '';
@@ -2199,7 +2166,6 @@ async function aSaveService() {
 }
 
 async function aDeleteService(id) {
-  console.log('aDeleteService called with id:', id);
   if (!confirm("Xizmatni o'chirishni xohlaysizmi?")) return;
   try { await sb.from('services').delete().eq('id', id); } catch(e) { console.error(e); }
   SB_DATA.services = (SB_DATA.services || []).filter(s => s.id !== id);
