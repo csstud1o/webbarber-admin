@@ -1060,12 +1060,13 @@ select.a-form-input option{background:#1A1A1E}
 // CONFIG
 // ============================================================
 const SUPABASE_URL  = 'https://vezdgqyndfdafwcdrgfz.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlemRncXluZGZkYWZ3Y2RyZ2Z6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDgwMjYsImV4cCI6MjA5MzQ4NDAyNn0.k7XfxYOjHbdIVfpzJLhzvIcDUNRWHH-pLNjFIl5X22o';
+// Service role key for admin operations (bypasses RLS)
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlemRncXluZGZkYWZ3Y2RyZ2Z6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzkwODAyNiwiZXhwIjoyMDkzNDg0MDI2fQ.lfl41wMlXsUM5QoBKLT3O7W9M-M6LW3ps2yt0K8cmpw';
 const ADMIN_IDS     = ['8536944196'];
 const BOT_TOKEN     = '8713436896:AAEZikFtiOUxDykT4gS59YExnO4tcVQmRFk';
 
 const { createClient } = supabase;
-const sb  = createClient(SUPABASE_URL, SUPABASE_ANON);
+const sb  = createClient(SUPABASE_URL, SUPABASE_KEY);
 const tg  = window.Telegram?.WebApp;
 const MNs = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
 
