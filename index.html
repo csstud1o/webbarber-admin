@@ -349,7 +349,7 @@ body{font-family:'Outfit',sans-serif}
 .a-search svg{color:#606078;flex-shrink:0;width:13px;height:13px}
 .a-search input{background:none;border:none;outline:none;color:#E8E8F0;font-size:12px;font-family:'DM Sans',sans-serif;width:100%}
 .a-search input::placeholder{color:#606078}
-table{width:100%;border-collapse:collapse}
+table{width:100%;border-collapse:collapse;min-width:500px}
 thead th{text-align:left;padding:11px 20px;font-size:9px;font-weight:700;letter-spacing:1.5px;color:#606078;text-transform:uppercase;font-family:'JetBrains Mono',monospace;background:#1A1A1E;border-bottom:1px solid #2A2A32}
 tbody tr{border-bottom:1px solid #2A2A32;transition:background .15s}
 tbody tr:last-child{border-bottom:none}
@@ -1764,41 +1764,54 @@ function aCheckMobile() {
 
 // GLOBAL EVENT DELEGATION - handles all dynamically created button clicks
 document.addEventListener('click', function(e) {
-  // Handle toggle buttons (a-toggle)
-  if (e.target.closest('.a-toggle')) {
-    const toggle = e.target.closest('.a-toggle');
-    const onclick = toggle.getAttribute('onclick');
-    if (onclick) {
-      try { eval(onclick); } catch(err) { console.error('Toggle error:', err); }
-    }
-    e.preventDefault();
-    e.stopPropagation();
+  // Find the clicked button element
+  let btn = e.target.closest('.a-toggle') || e.target.closest('.a-act-btn.edit') || e.target.closest('.a-act-btn.del');
+  if (!btn) return;
+
+  // Get onclick attribute and extract function call
+  const onclick = btn.getAttribute('onclick');
+  if (!onclick) return;
+
+  console.log('Button clicked, onclick:', onclick);
+
+  // Parse function name and arguments from onclick
+  const match = onclick.match(/^(\w+)\((.*)\)$/);
+  if (!match) {
+    console.log('Could not parse onclick:', onclick);
     return;
   }
 
-  // Handle edit buttons (barbers and services)
-  if (e.target.closest('.a-act-btn.edit')) {
-    const btn = e.target.closest('.a-act-btn.edit');
-    const onclick = btn.getAttribute('onclick');
-    if (onclick) {
-      try { eval(onclick); } catch(err) { console.error('Edit click error:', err); }
+  const funcName = match[1];
+  let args = match[2];
+
+  // Handle different argument types
+  let parsedArgs = [];
+  if (args) {
+    // Check if it's a number or string
+    if (args.startsWith("'") || args.startsWith('"')) {
+      parsedArgs = [args.slice(1, -1)];
+    } else if (!isNaN(args)) {
+      parsedArgs = [parseInt(args)];
+    } else {
+      // Try to evaluate arrays like "1,2,3"
+      try {
+        parsedArgs = JSON.parse('[' + args + ']');
+      } catch(err) {
+        parsedArgs = [args];
+      }
     }
-    e.preventDefault();
-    e.stopPropagation();
-    return;
   }
 
-  // Handle delete buttons
-  if (e.target.closest('.a-act-btn.del')) {
-    const btn = e.target.closest('.a-act-btn.del');
-    const onclick = btn.getAttribute('onclick');
-    if (onclick) {
-      try { eval(onclick); } catch(err) { console.error('Delete click error:', err); }
-    }
-    e.preventDefault();
-    e.stopPropagation();
-    return;
+  // Try to call the function
+  if (typeof window[funcName] === 'function') {
+    console.log('Calling:', funcName, 'with args:', parsedArgs);
+    window[funcName].apply(null, parsedArgs);
+  } else {
+    console.log('Function not found:', funcName);
   }
+
+  e.preventDefault();
+  e.stopPropagation();
 });
 
 // DASHBOARD
