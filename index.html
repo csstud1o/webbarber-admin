@@ -342,7 +342,7 @@ body{font-family:'Outfit',sans-serif}
 .a-sc-sub{font-size:11px;color:#606078}
 
 /* ADMIN TABLE */
-.a-table-card{background:#141416;border:1px solid #2A2A32;border-radius:12px;overflow:hidden;margin-bottom:18px}
+.a-table-card{background:#141416;border:1px solid #2A2A32;border-radius:12px;overflow-x:auto;margin-bottom:18px}
 .a-table-head{padding:16px 20px;border-bottom:1px solid #2A2A32;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .a-th-title{font-size:13px;font-weight:700;color:#E8E8F0}
 .a-search{display:flex;align-items:center;gap:7px;background:#1A1A1E;border:1px solid #2A2A32;border-radius:8px;padding:8px 12px;flex:1;max-width:220px}
@@ -364,14 +364,14 @@ td{padding:13px 20px;font-size:13px;vertical-align:middle;color:#E8E8F0}
 .a-badge-gold{background:rgba(240,180,41,.08);color:#F0B429;border:1px solid rgba(240,180,41,.2)}
 .a-badge-blue{background:rgba(76,201,240,.08);color:#4CC9F0;border:1px solid rgba(76,201,240,.2)}
 .a-td-actions{display:flex;gap:5px}
-.a-act-btn{width:30px;height:30px;border-radius:7px;border:1px solid #2A2A32;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#9090A8;transition:.2s}
+.a-act-btn{width:30px;min-width:30px;height:30px;border-radius:7px;border:1px solid #2A2A32;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#9090A8;transition:.2s;pointer-events:all;position:relative;z-index:20}
 .a-act-btn.edit:hover{border-color:#4CC9F0;color:#4CC9F0;background:rgba(76,201,240,.08)}
 .a-act-btn.del:hover{border-color:#EF4565;color:#EF4565;background:rgba(239,69,101,.08)}
 .a-act-btn.view-btn:hover{border-color:#F0B429;color:#F0B429;background:rgba(240,180,41,.08)}
 
 /* ADMIN BARBER GRID */
 .a-barber-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
-.a-bmc{background:#141416;border:1px solid #2A2A32;border-radius:12px;padding:18px;text-align:center;position:relative;transition:.2s}
+.a-bmc{background:#141416;border:1px solid #2A2A32;border-radius:12px;padding:18px;text-align:center;position:relative;transition:.2s;overflow:visible}
 .a-bmc:hover{border-color:#353540}
 .a-bmc-ava{width:58px;height:58px;border-radius:50%;background:rgba(240,180,41,.08);border:2px solid rgba(240,180,41,.2);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:24px;color:#F0B429;overflow:hidden}
 .a-bmc-ava img{width:100%;height:100%;object-fit:cover}
@@ -387,7 +387,7 @@ td{padding:13px 20px;font-size:13px;vertical-align:middle;color:#E8E8F0}
 .a-bmc-toggle{position:absolute;top:12px;right:12px}
 
 /* TOGGLE */
-.a-toggle{width:34px;height:18px;background:#2A2A32;border-radius:9px;cursor:pointer;position:relative;transition:.3s;border:1px solid #353540}
+.a-toggle{width:34px;height:18px;background:#2A2A32;border-radius:9px;cursor:pointer;position:relative;transition:.3s;border:1px solid #353540;z-index:5}
 .a-toggle::after{content:'';position:absolute;width:12px;height:12px;background:#606078;border-radius:50%;top:2px;left:2px;transition:.3s}
 .a-toggle.on{background:rgba(6,214,160,.15);border-color:rgba(6,214,160,.3)}
 .a-toggle.on::after{background:#06D6A0;left:18px}
