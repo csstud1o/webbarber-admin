@@ -2020,7 +2020,7 @@ async function aUploadBarberImage() {
 }
 
 async function aSaveBarber() {
-  const id   = parseInt(document.getElementById('m-b-id').value) || null;
+  const id   = document.getElementById('m-b-id').value || null;
   const name = document.getElementById('m-b-name').value.trim();
   if (!name) { showToast('Ismni kiriting!', 'err'); return; }
 
@@ -2043,12 +2043,20 @@ async function aSaveBarber() {
   };
   try {
     if (id) {
-      await sb.from('barbers').update(obj).eq('id', id);
+      // Update existing - verify it works
+      const r = await sb.from('barbers').update(obj).eq('id', id);
+      const check = await sb.from('barbers').select('*').eq('id', id).single();
+      if (!check.data || check.data.name !== name) {
+        showToast('Xatolik: Yangilanmadi!', 'err');
+        return;
+      }
       const b = SB_DATA.barbers.find(x => x.id === id);
       if (b) Object.assign(b, obj);
+      showToast('Master yangilandi ✅', 'ok');
     } else {
       const { data } = await sb.from('barbers').insert(obj).select().single();
       if (data) SB_DATA.barbers.push(data);
+      showToast('Master qo\'shildi ✅', 'ok');
     }
   } catch(e) {
     console.error(e);
@@ -2078,10 +2086,21 @@ async function aToggleBarber(id) {
 
 async function aDeleteBarber(id) {
   if (!confirm("Masterni o'chirishni xohlaysizmi?")) return;
-  try { await sb.from('barbers').delete().eq('id', id); } catch(e) { console.error(e); }
-  SB_DATA.barbers = (SB_DATA.barbers || []).filter(b => b.id !== id);
-  aRenderBarbers();
-  showToast("Master o'chirildi", 'err');
+  try {
+    const r = await sb.from('barbers').delete().eq('id', id);
+    // Verify delete worked
+    const check = await sb.from('barbers').select('id').eq('id', id).single();
+    if (check.data) {
+      showToast("Xatolik: O'chirilmadi!", 'err');
+      return;
+    }
+    SB_DATA.barbers = (SB_DATA.barbers || []).filter(b => b.id !== id);
+    aRenderBarbers();
+    showToast("Master o'chirildi ✅", 'ok');
+  } catch(e) {
+    console.error(e);
+    showToast("Xatolik: " + e.message, 'err');
+  }
 }
 
 // SERVICES
@@ -2123,7 +2142,7 @@ function aOpenServiceModal(id = null) {
 }
 
 async function aSaveService() {
-  const id    = parseInt(document.getElementById('m-s-id').value) || null;
+  const id    = document.getElementById('m-s-id').value || null;
   const name  = document.getElementById('m-s-name').value.trim();
   const price = parseInt(document.getElementById('m-s-price').value);
   if (!name || !price) { showToast('Nomi va narxni kiriting!', 'err'); return; }
@@ -2135,28 +2154,45 @@ async function aSaveService() {
   try {
     if (id) {
       await sb.from('services').update(obj).eq('id', id);
+      const check = await sb.from('services').select('*').eq('id', id).single();
+      if (!check.data || check.data.name !== name) {
+        showToast('Xatolik: Yangilanmadi!', 'err');
+        return;
+      }
       const s = SB_DATA.services.find(x => x.id === id);
       if (s) Object.assign(s, obj);
+      showToast('Xizmat yangilandi ✅', 'ok');
     } else {
       const { data } = await sb.from('services').insert(obj).select().single();
       if (data) SB_DATA.services.push(data);
+      showToast('Xizmat qo\'shildi ✅', 'ok');
     }
   } catch(e) {
     console.error(e);
-    if (!id) SB_DATA.services.push({ id: Date.now(), ...obj });
-    else { const s = SB_DATA.services.find(x => x.id === id); if (s) Object.assign(s, obj); }
+    showToast('Xatolik: ' + e.message, 'err');
+    return;
   }
   aCloseModal('m-service');
   aRenderServices();
-  showToast(id ? 'Xizmat yangilandi' : "Xizmat qo'shildi", 'ok');
 }
 
 async function aDeleteService(id) {
   if (!confirm("Xizmatni o'chirishni xohlaysizmi?")) return;
-  try { await sb.from('services').delete().eq('id', id); } catch(e) { console.error(e); }
-  SB_DATA.services = (SB_DATA.services || []).filter(s => s.id !== id);
-  aRenderServices();
-  showToast("Xizmat o'chirildi", 'err');
+  try {
+    await sb.from('services').delete().eq('id', id);
+    // Verify delete worked
+    const check = await sb.from('services').select('id').eq('id', id).single();
+    if (check.data) {
+      showToast("Xatolik: O'chirilmadi!", 'err');
+      return;
+    }
+    SB_DATA.services = (SB_DATA.services || []).filter(s => s.id !== id);
+    aRenderServices();
+    showToast("Xizmat o'chirildi ✅", 'ok');
+  } catch(e) {
+    console.error(e);
+    showToast("Xatolik: " + e.message, 'err');
+  }
 }
 
 // CLIENTS
