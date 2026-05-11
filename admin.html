@@ -353,19 +353,28 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 async function checkAdmin(telegramId) {
   try {
+    // Check both database AND hardcoded admin ID
     const { data, error } = await sb
       .from('admins')
       .select('*')
-      .eq('telegram_id', telegramId)
+      .eq('telegram_id', String(telegramId))
       .single();
 
-    if (data) {
+    // Also check hardcoded admin ID
+    const isHardcodedAdmin = String(telegramId) === '8536944196';
+
+    if (data || isHardcodedAdmin) {
       showMain();
     } else {
-      showError('Siz admin emassiz');
+      showError('Siz admin emassiz. Faqat admin kirish mumkin.');
     }
   } catch(e) {
-    showError('Xatolik: ' + e.message);
+    // If error, also check hardcoded admin
+    if (String(telegramId) === '8536944196') {
+      showMain();
+    } else {
+      showError('Xatolik: ' + e.message);
+    }
   }
 }
 
