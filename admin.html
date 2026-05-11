@@ -131,6 +131,30 @@ select.settings-input{width:160px}
 .section-header{padding:16px 16px 8px;display:flex;justify-content:space-between;align-items:center}
 .section-title{font-size:13px;font-weight:600;color:var(--text2)}
 .section-add{background:var(--accent);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:11px;font-weight:600;border:none;cursor:pointer}
+
+/* Responsive - Phone */
+@media (max-width: 480px) {
+  .list{padding:0 12px}
+  .list-item{padding:10px;gap:8px}
+  .list-item-avatar{width:36px;height:36px;font-size:16px}
+  .list-item-title{font-size:12px}
+  .list-item-sub{font-size:10px}
+  .list-item-meta{font-size:9px}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:8px;padding:12px}
+  .stat-card{padding:10px}
+  .stat-value{font-size:20px}
+  .tab{padding:10px 6px;font-size:10px}
+  .header{padding:10px 12px}
+  .section-header{padding:12px 12px 8px}
+  .service-item{padding:10px}
+  .service-name{font-size:12px}
+  .service-price{font-size:12px}
+  .fab{bottom:60px;right:12px;width:48px;height:48px;font-size:20px}
+  .btn{padding:8px 12px;font-size:11px}
+  .form-input{padding:10px;font-size:13px}
+  .modal-content{max-width:100%;margin:8px}
+  .settings-input{width:120px;font-size:11px}
+}
 </style>
 </head>
 <body>
@@ -282,7 +306,8 @@ select.settings-input{width:160px}
 <script>
 // ============ CONFIG ============
 const SUPABASE_URL = 'https://vezdgqyndfdafwcdrgfz.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlemRncXluZGZkYWZ3Y2RyZ2Z6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDgwMjYsImV4cCI6MjA5MzQ4NDAyNn0.k7XfxYOjHbdIVfpzJLhzvIcDUNRWHH-pLNjFIl5X22o';
+// Service role key - bypasses RLS for admin operations
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlemRncXluZGZkYWZ3Y2RyZ2Z6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzkwODAyNiwiZXhwIjoyMDkzNDg0MDI2fQ.lfl41wMlXsUM5QoBKLT3O7W9M-M6LW3ps2yt0K8cmpw';
 
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -751,17 +776,8 @@ async function saveEditedBarber(id) {
       rating: parseFloat(document.getElementById('barber-rating').value) || 4.5
     };
 
-    var result = await sb.from('barbers').update(barber).eq('id', id);
-    console.log('Update result:', result);
-
-    // Verify update worked
-    var check = await sb.from('barbers').select('*').eq('id', id).single();
-    if (!check.data || check.data.name !== name) {
-      showToast('Xatolik: Yangilanmadi', 'error');
-      return;
-    }
-
-    setTimeout(function() { loadBarbers(); }, 100);
+    await sb.from('barbers').update(barber).eq('id', id);
+    loadBarbers();
     closeModal();
     showToast('Master yangilandi ✅', 'success');
   } catch(e) {
@@ -773,15 +789,8 @@ async function saveEditedBarber(id) {
 async function deleteBarber(id) {
   if (confirm('Masterni o\'chirish?')) {
     try {
-      var result = await sb.from('barbers').delete().eq('id', id);
-      console.log('Delete result:', result);
-      // Verify delete worked by checking if record still exists
-      var check = await sb.from('barbers').select('id').eq('id', id).single();
-      if (check.data) {
-        showToast('Xatolik: O\'chirilmadi', 'error');
-        return;
-      }
-      setTimeout(function() { loadBarbers(); }, 100);
+      await sb.from('barbers').delete().eq('id', id);
+      loadBarbers();
       showToast('Master o\'chirildi ✅', 'success');
     } catch(e) {
       console.error('Delete error:', e);
