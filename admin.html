@@ -754,8 +754,9 @@ async function saveEditedBarber(id) {
     console.log('Updating barber:', id, barber);
     var result = await sb.from('barbers').update(barber).eq('id', id);
     console.log('Update result:', result);
+    // Force reload after update
+    setTimeout(function() { loadBarbers(); }, 100);
     closeModal();
-    loadBarbers();
     showToast('Master yangilandi ✅', 'success');
   } catch(e) {
     console.error('Update error:', e);
@@ -769,7 +770,8 @@ async function deleteBarber(id) {
       console.log('Deleting barber:', id);
       var result = await sb.from('barbers').delete().eq('id', id);
       console.log('Delete result:', result);
-      loadBarbers();
+      // Force reload after delete
+      setTimeout(function() { loadBarbers(); }, 100);
       showToast('Master o\'chirildi', 'success');
     } catch(e) {
       console.error('Delete error:', e);
