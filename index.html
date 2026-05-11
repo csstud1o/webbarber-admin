@@ -381,8 +381,9 @@ td{padding:13px 20px;font-size:13px;vertical-align:middle;color:#E8E8F0}
 .a-bmc-stat{background:#1A1A1E;padding:9px;text-align:center}
 .a-bmc-sval{font-family:'Bebas Neue',sans-serif;font-size:16px;color:#FFD166}
 .a-bmc-slbl{font-size:9px;color:#606078;font-family:'JetBrains Mono',monospace}
-.a-bmc-actions{display:flex;gap:5px;margin-top:10px}
-.a-bmc-actions .a-act-btn{flex:1;width:auto}
+.a-bmc-actions{display:flex;gap:5px;margin-top:10px;position:relative;z-index:10}
+.a-bmc-actions .a-act-btn{flex:1;width:auto;min-height:36px;padding:8px 12px}
+.a-bmc-actions .a-act-btn.edit{display:flex;align-items:center;justify-content:center;gap:6px}
 .a-bmc-toggle{position:absolute;top:12px;right:12px}
 
 /* TOGGLE */
@@ -467,7 +468,7 @@ select.a-form-input option{background:#1A1A1E}
   .a-barber-grid{grid-template-columns:1fr 1fr}
   .a-grid-2,.a-grid-3{grid-template-columns:1fr}
   .a-form-grid{grid-template-columns:1fr}
-  .a-content{padding:12px;padding-bottom:80px;overflow-x:hidden}
+  .a-content{padding:12px;padding-bottom:80px;overflow-x:auto}
   .a-topbar{padding:10px 14px}
   .a-page-title{font-size:16px}
   table{font-size:11px;overflow-x:auto;display:block}
@@ -1928,6 +1929,7 @@ function aRenderBarbers() {
     </div>`).join('') || '<div style="padding:30px;text-align:center;color:#606078">Masterlar yo\'q</div>';
 }
 
+console.log('aOpenBarberModal called with id:', id);
 function aOpenBarberModal(id = null) {
   document.getElementById('m-barber-title').textContent = id ? 'MASTERNI TAHRIRLASH' : "MASTER QO'SHISH";
   document.getElementById('m-b-id').value = id || '';
@@ -2050,6 +2052,7 @@ async function aToggleBarber(id) {
 }
 
 async function aDeleteBarber(id) {
+  console.log('aDeleteBarber called with id:', id);
   if (!confirm("Masterni o'chirishni xohlaysizmi?")) return;
   try { await sb.from('barbers').delete().eq('id', id); } catch(e) { console.error(e); }
   SB_DATA.barbers = (SB_DATA.barbers || []).filter(b => b.id !== id);
@@ -2077,6 +2080,7 @@ function aRenderServices() {
     </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:30px;color:#606078">Xizmatlar yo\'q</td></tr>';
 }
 
+console.log('aOpenServiceModal called with id:', id);
 function aOpenServiceModal(id = null) {
   document.getElementById('m-svc-title').textContent = id ? 'XIZMATNI TAHRIRLASH' : "XIZMAT QO'SHISH";
   document.getElementById('m-s-id').value = id || '';
@@ -2125,6 +2129,7 @@ async function aSaveService() {
 }
 
 async function aDeleteService(id) {
+  console.log('aDeleteService called with id:', id);
   if (!confirm("Xizmatni o'chirishni xohlaysizmi?")) return;
   try { await sb.from('services').delete().eq('id', id); } catch(e) { console.error(e); }
   SB_DATA.services = (SB_DATA.services || []).filter(s => s.id !== id);
