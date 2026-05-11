@@ -461,24 +461,57 @@ select.a-form-input option{background:#1A1A1E}
 .a-bn-badge{position:absolute;top:4px;right:8px;min-width:16px;height:16px;border-radius:8px;background:#F0B429;color:#0D0D0F;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;padding:0 4px}
 
 @media(max-width:768px){
-  .a-sidebar{width:220px;background:#141416;transform:translateX(-100%);transition:transform 0.3s;left:0}
+  /* Sidebar - slide from left */
+  .a-sidebar{width:220px;background:#141416;transform:translateX(-100%);transition:transform 0.3s;left:0;z-index:200}
   .a-sidebar.open{transform:translateX(0)}
-  .a-main{margin-left:0}
-  .a-stats-grid{grid-template-columns:1fr}
-  .a-barber-grid{grid-template-columns:1fr 1fr}
-  .a-grid-2,.a-grid-3{grid-template-columns:1fr}
-  .a-form-grid{grid-template-columns:1fr}
-  .a-content{padding:12px;padding-bottom:80px;overflow-x:auto}
-  .a-topbar{padding:10px 14px}
-  .a-page-title{font-size:16px}
-  table{font-size:11px;overflow-x:auto;display:block}
-  thead th{padding:8px 10px;font-size:8px}
-  td{padding:8px 10px}
-  .a-td-actions{min-width:60px}
-  .a-modal{margin:12px;max-width:calc(100vw - 24px)}
-  .a-stats-grid .a-sc-val{font-size:24px}
-  .a-chart-area{overflow-x:auto;padding:14px 10px}
-  .a-chart-area::-webkit-scrollbar{height:4px}
+  .a-main{margin-left:0;width:100vw;overflow-x:hidden}
+
+  /* Content - scrollable */
+  .a-content{padding:12px;padding-bottom:90px;overflow-x:hidden;min-height:calc(100vh - 60px);width:100%;box-sizing:border-box}
+
+  /* Make all views properly scrollable on mobile */
+  .a-view{overflow-x:hidden;width:100%}
+  .a-view.active{display:block;width:100%}
+
+  /* Stats grid */
+  .a-stats-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .a-stat{padding:12px}
+  .a-sc-val{font-size:22px}
+  .a-sc-label{font-size:8px}
+
+  /* Barbers grid - show 1 column */
+  .a-barber-grid{grid-template-columns:1fr;gap:10px;width:100%}
+
+  /* Tables */
+  .a-table-card{overflow-x:visible;width:100%;margin-bottom:12px}
+  .a-table-card table{font-size:10px;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;max-width:100vw}
+  .a-table-card thead,.a-table-card tbody,.a-table-card tr,.a-table-card th,.a-table-card td{display:block;width:100%}
+  .a-table-card thead{position:absolute;top:-9999px;left:-9999px}
+  .a-table-card td{position:relative;padding-left:50%;text-align:right;min-height:30px;border-bottom:1px solid #2A2A32}
+  .a-table-card td:before{content:attr(data-label);position:absolute;left:8px;text-align:left;font-weight:600;color:#606078;top:8px}
+
+  /* Action buttons - big and clickable */
+  .a-bmc-actions{flex-direction:column;gap:8px;margin-top:12px;position:relative;z-index:100}
+  .a-bmc-actions .a-act-btn{width:100%;height:40px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 12px}
+  .a-bmc-actions .a-act-btn.edit{background:#4CC9F0;color:#0D0D0F;border-color:#4CC9F0}
+  .a-bmc-actions .a-act-btn.del{background:#EF4565;color:#fff;border-color:#EF4565}
+
+  /* Top action button */
+  .a-topbar-right{position:fixed;bottom:20px;right:20px;z-index:150}
+  .a-btn-primary{padding:14px 24px;font-size:14px;box-shadow:0 4px 20px rgba(240,180,41,0.4)}
+
+  /* Topbar */
+  .a-topbar{padding:10px 12px;position:sticky;top:0;z-index:100;background:#141416}
+  .a-page-title{font-size:15px}
+  .a-page-sub{font-size:11px}
+
+  /* Modal */
+  .a-modal{margin:10px;padding:16px;max-width:calc(100vw - 20px)}
+  .a-modal-title{font-size:16px}
+
+  /* Table actions column */
+  .a-td-actions{min-width:70px;display:flex;gap:6px}
+  .a-td-actions .a-act-btn{width:32px;height:32px;min-width:32px}
 }
 </style>
 </head>
@@ -2064,17 +2097,17 @@ async function aDeleteBarber(id) {
 function aRenderServices() {
   document.getElementById('a-svcs-tbody').innerHTML = (SB_DATA.services || []).map(s => `
     <tr>
-      <td style="font-size:20px">${s.icon}</td>
-      <td><div class="a-td-name">${s.name}</div></td>
-      <td><span style="font-family:'JetBrains Mono',monospace;color:#FFD166">${s.price.toLocaleString()} so'm</span></td>
-      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px">${s.duration} daqiqa</span></td>
-      <td style="font-size:12px;color:#9090A8">${s.description || '—'}</td>
-      <td><div class="a-td-actions">
+      <td data-label="Icon" style="font-size:20px">${s.icon}</td>
+      <td data-label="Nomi"><div class="a-td-name">${s.name}</div></td>
+      <td data-label="Narxi"><span style="font-family:'JetBrains Mono',monospace;color:#FFD166">${s.price.toLocaleString()} so'm</span></td>
+      <td data-label="Davomiyligi"><span style="font-family:'JetBrains Mono',monospace;font-size:12px">${s.duration} daqiqa</span></td>
+      <td data-label="Tavsif" style="font-size:12px;color:#9090A8">${s.description || '—'}</td>
+      <td data-label="Amal"><div class="a-td-actions">
         <button class="a-act-btn edit" onclick="aOpenServiceModal(${s.id})">
-          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
         <button class="a-act-btn del" onclick="aDeleteService(${s.id})">
-          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H5L4,6"/></svg>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H5L4,6"/></svg>
         </button>
       </div></td>
     </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:30px;color:#606078">Xizmatlar yo\'q</td></tr>';
