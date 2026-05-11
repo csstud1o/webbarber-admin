@@ -307,58 +307,49 @@ document.addEventListener('DOMContentLoaded', async function() {
   });
 
   // BUG FIX 2 & 3: Event delegation for dynamically rendered buttons
-  // Use document-level delegation to handle clicks on buttons added after page load
   document.addEventListener('click', function(e) {
-    console.log('Click detected on:', e.target.tagName, e.target.className);
-
     // Handle toggle buttons (switch)
-    if (e.target.classList.contains('switch') || e.target.closest('.switch')) {
-      var switchEl = e.target.classList.contains('switch') ? e.target : e.target.closest('.switch');
-      console.log('Switch clicked:', switchEl);
+    var switchEl = e.target.closest('.switch');
+    if (switchEl) {
       var parent = switchEl.closest('.list-item') || switchEl.closest('.service-item');
       if (parent) {
+        var id = switchEl.getAttribute('data-id');
         if (parent.closest('#barbers-list')) {
           toggleBarber(switchEl);
         } else if (parent.closest('#services-list')) {
           toggleService(switchEl);
         }
       }
-      e.stopPropagation();
       return;
     }
 
-    // Handle edit buttons - check both inline onclick and delegated
-    if (e.target.classList.contains('edit-btn') || e.target.closest('.edit-btn')) {
-      console.log('Edit button clicked');
-      var btn = e.target.classList.contains('edit-btn') ? e.target : e.target.closest('.edit-btn');
-      // Get ID from the onclick attribute
-      var match = btn.getAttribute('onclick').match(/'([^']+)'/);
-      if (match) {
-        var id = match[1];
-        if (btn.closest('#barbers-list')) {
+    // Handle edit buttons
+    var editBtn = e.target.closest('.edit-btn');
+    if (editBtn) {
+      var id = editBtn.getAttribute('data-id');
+      var parent = editBtn.closest('.list-item') || editBtn.closest('.service-item');
+      if (parent && id) {
+        if (parent.closest('#barbers-list')) {
           editBarber(id);
-        } else if (btn.closest('#services-list')) {
+        } else if (parent.closest('#services-list')) {
           editService(id);
         }
       }
-      e.stopPropagation();
       return;
     }
 
     // Handle delete buttons
-    if (e.target.classList.contains('delete-btn') || e.target.closest('.delete-btn')) {
-      console.log('Delete button clicked');
-      var btn = e.target.classList.contains('delete-btn') ? e.target : e.target.closest('.delete-btn');
-      var match = btn.getAttribute('onclick').match(/'([^']+)'/);
-      if (match) {
-        var id = match[1];
-        if (btn.closest('#barbers-list')) {
+    var deleteBtn = e.target.closest('.delete-btn');
+    if (deleteBtn) {
+      var id = deleteBtn.getAttribute('data-id');
+      var parent = deleteBtn.closest('.list-item') || deleteBtn.closest('.service-item');
+      if (parent && id) {
+        if (parent.closest('#barbers-list')) {
           deleteBarber(id);
-        } else if (btn.closest('#services-list')) {
+        } else if (parent.closest('#services-list')) {
           deleteService(id);
         }
       }
-      e.stopPropagation();
       return;
     }
   });
@@ -662,8 +653,8 @@ async function loadBarbers() {
         '<div class="list-item-right">' +
         '<div class="switch ' + (b.active ? 'active' : '') + '" data-id="' + b.id + '" data-active="' + b.active + '" onclick="toggleBarber(this)"></div>' +
         '<div class="action-btns">' +
-        '<button class="btn btn-sm btn-secondary edit-btn" onclick="editBarber(\'' + b.id + '\')">✏️</button>' +
-        '<button class="btn btn-sm btn-danger delete-btn" onclick="deleteBarber(\'' + b.id + '\')">🗑️</button>' +
+        '<button class="btn btn-sm btn-secondary edit-btn" data-id="' + b.id + '">✏️</button>' +
+        '<button class="btn btn-sm btn-danger delete-btn" data-id="' + b.id + '">🗑️</button>' +
         '</div>' +
         '</div>' +
         '</div>';
@@ -805,8 +796,8 @@ async function loadServices() {
         '</div>' +
         '</div>' +
         '<div class="service-actions">' +
-        '<button class="btn btn-sm btn-secondary edit-btn" onclick="editService(\'' + s.id + '\')">✏️ Tahrirlash</button>' +
-        '<button class="btn btn-sm btn-danger delete-btn" onclick="deleteService(\'' + s.id + '\')">🗑️ O\'chirish</button>' +
+        '<button class="btn btn-sm btn-secondary edit-btn" data-id="' + s.id + '">✏️ Tahrirlash</button>' +
+        '<button class="btn btn-sm btn-danger delete-btn" data-id="' + s.id + '">🗑️ O\'chirish</button>' +
         '</div>' +
         '</div>';
     });
